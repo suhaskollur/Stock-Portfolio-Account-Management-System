@@ -45,10 +45,10 @@ The project incorporates at least two design patterns, enhancing functionality a
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/Account-Management-System.git
+git clone https://github.com/yourusername/Stock-Portfolio-Account-Management-System.git
 
 # Navigate to the project directory
-cd Account-Management-System
+cd Stock-Portfolio-Account-Management-System
 
 # Build and run the project
 # Add specific build and run instructions if necessary
