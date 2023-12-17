@@ -1,153 +1,135 @@
-#include <stdio.h>
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <time.h>
-#include <iomanip>
-#include <filesystem>
-#include <ctime>
-
 #include "bankaccount.h"
 
 using namespace std;
 
-bankaccount :: bankaccount()
+bankaccount::bankaccount()
 {
     balance = 10000;
+    set_balance(); // Initialize balance from file
 }
 
-bankaccount :: ~bankaccount()
+bankaccount::~bankaccount()
 {
-    std::fstream balance_file;
-    balance_file.open("cash_balance.txt", std::fstream::out);
-    balance_file << balance;
-    balance_file.close();
+    save_balance_to_file(); // Save balance to file when the object is destroyed
 }
 
-void bankaccount :: set_balance()
+void bankaccount::set_balance()
 {
-    std::fstream Balance;
-    Balance.open("Balance.txt", std::fstream::in);
-    if(!Balance) 
+    ifstream Balance("Balance.txt");
+    if (!Balance)
     {
-        Balance.open("Balance.txt", std::fstream::in);
         balance = 10000;
-        Balance << balance;
-        Balance.close();
+        ofstream initialBalance("Balance.txt");
+        initialBalance << balance;
+        initialBalance.close();
     }
     else
     {
         Balance >> balance;
-        Balance.close();
     }
-    return;
 }
 
-void bankaccount :: view_acc_balance()
+void bankaccount::view_acc_balance() const
 {
-    cout << "Total Amount Available in Your Bank Account: " << balance;
-    return;
+    cout << "Total Amount Available in Your Bank Account: " << balance << endl;
 }
 
-void bankaccount :: deposit_money()
+void bankaccount::deposit_money()
 {
     double money;
-    cout << "Enter the Amount You Would Like to Deposit in Your Account: " << endl;
+    cout << "Enter the Amount You Would Like to Deposit in Your Account: ";
     cin >> money;
-    if(money <= 25000)
+
+    if (money > 0)
     {
-        cout << "Total Amount Available in Your Bank Account: " << (balance + money);
-        transaction_list("MONEY DEPOSITED", money);
+        if (money <= 25000)
+        {
+            balance += money;
+            cout << "Total Amount Available in Your Bank Account: " << balance << endl;
+            transaction_list("MONEY DEPOSITED", money);
+        }
+        else
+        {
+            cout << "Amount Exceeds $25000. Please Do Multiple Transactions or Try Again the Next Day" << endl;
+        }
     }
-    else 
+    else
     {
-        cout << "Amount Exceeds $25000. Please Do Multiple Transactions or Try Again the Next Day" << endl;
+        cout << "Invalid amount. Please enter a positive value." << endl;
     }
 }
 
-void bankaccount :: withdraw_money()
-{   
-    double money;
-    cout << "Enter the Amount You Would Like to Withdraw From Your Account: " << endl;
-    cin >> money;
-    if (balance < money)
-    {
-        cout << "Transaction Failed due to Insufficient Funds" << endl;
-    }
-    else if (money <= 10000)
-    {
-        cout << "Total Amount Available in Your Bank Account: " << (balance - money);
-    }
-    else 
-    {
-        cout << "Amount Exceeds $10000. Please Do Multiple Transactions or Try Again the Next Day" << endl;
-    }
-    transaction_list("MONEY WITHDRAWN", money);
-}
-
-void bankaccount :: print_history() const
+void bankaccount::withdraw_money()
 {
-    
-    fstream file_transaction;
-    file_transaction.open("recorded_transactions.txt", fstream::in);
-    if(!file_transaction)
+    double money;
+    cout << "Enter the Amount You Would Like to Withdraw From Your Account: ";
+    cin >> money;
+
+    if (money > 0)
+    {
+        if (balance >= money)
+        {
+            balance -= money;
+            cout << "Total Amount Available in Your Bank Account: " << balance << endl;
+            transaction_list("MONEY WITHDRAWN", money);
+        }
+        else
+        {
+            cout << "Transaction Failed due to Insufficient Funds" << endl;
+        }
+    }
+    else
+    {
+        cout << "Invalid amount. Please enter a positive value." << endl;
+    }
+}
+
+void bankaccount::print_history() const
+{
+    ifstream file_transaction("Transaction_History.txt");
+    if (!file_transaction)
     {
         cout << "No Transactions Exist for This Bank Account." << endl;
     }
     else
     {
-        cout << left << "\tOccurence" << "\tAmount" << "\tDate" << "\tBalance" << endl;
-        while(!file_transaction.eof())
+        cout << left << "\tOccurrence" << "\tAmount" << "\tDate" << "\tBalance" << endl;
+        string occurrence, amount, date, balance;
+        while (file_transaction >> occurrence >> amount >> date >> balance)
         {
-            string alphabhet;
-            int cnt = 1;
-            while (cnt <= 4)
-            {
-                if(cnt == 2 || cnt == 4)
-                {
-                    file_transaction >> alphabhet;
-                    cout << "\t" << alphabhet;
-                    cnt++;
-                }
-                else 
-                {
-                    file_transaction >> alphabhet;
-                    cout << "\t" << alphabhet;
-                    cnt++;
-                }
-            }
-            cout << endl;
+            cout << "\t" << occurrence << "\t" << amount << "\t" << date << "\t" << balance << endl;
         }
     }
     file_transaction.close();
-    return;
 }
 
-void bankaccount :: transaction_list(string occured, double money)
+
+void bankaccount::transaction_list(const string &occurred, double money)
 {
-    char date[11];
     time_t transaction_seconds;
     time(&transaction_seconds);
-    // transaction_seconds = time(NULL);
+    struct tm *transaction_time = localtime(&transaction_seconds);
 
-    // struct tm* transaction_time;
-    // transaction_time = localtime(&transaction_seconds);
-    struct tm* transaction_time = localtime(&transaction_seconds);
-
+    char date[11];
     strftime(date, 11, "%m/%d/20%y", transaction_time);
-    std::fstream transactions;
-    transactions.open("Transaction_History.txt", std::fstream::app);
-    if(!transactions)
+
+    ofstream transactions("Transaction_History.txt", ios::app);
+    if (!transactions)
     {
-        transactions.open("Transaction_History.txt", std::fstream::out);
-        cout << left << "\tOccurence" << "\tAmount" << "\tDate" << "\tBalance" << endl;
+        transactions.open("Transaction_History.txt", ios::out);
+        cout << left << "\tOccurrence" << "\tAmount" << "\tDate" << "\tBalance" << endl;
     }
-    else 
-    {
-        cout << "\n" << left << "\tOccurence" << "\tAmount" << "\tDate" << "\tBalance" << endl;
-    }
+
+    transactions << left << "\t" << occurred << "\t" << money << "\t" << date << "\t" << balance << endl;
+
     transactions.close();
-    return;
 }
 
-
+void bankaccount::save_balance_to_file() const
+{
+    ofstream balance_file("Balance.txt");
+    if (balance_file)
+    {
+        balance_file << balance;
+    }
+}

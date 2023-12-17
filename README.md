@@ -45,7 +45,7 @@ The project incorporates at least two design patterns, enhancing functionality a
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/Stock-Portfolio-Account-Management-System.git
+git clone https://github.com/suhaskollur/Stock-Portfolio-Account-Management-System.git
 
 # Navigate to the project directory
 cd Stock-Portfolio-Account-Management-System
