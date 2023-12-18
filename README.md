@@ -1,4 +1,4 @@
-# Account Management System
+# Stock Portfolio Account Management System
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -38,6 +38,7 @@ The project incorporates at least two design patterns, enhancing functionality a
 2. Manage portfolio: buy, sell, and view details.
 3. Graph portfolio value over time.
 4. View transaction history.
+5. Bank Account transactions
 
 ## Installation
 
@@ -69,3 +70,8 @@ cd Stock-Portfolio-Account-Management-System
   
 - **Graphical Representation:**
   - Enables users to view a graph of the portfolio value over time using MATLAB.
+
+# Compile and Run the Program
+
+ - g++ -std=c++11 account.cpp bankaccount.cpp main_final.cpp stockaccount.cpp -o my_program
+ - ./my_program
