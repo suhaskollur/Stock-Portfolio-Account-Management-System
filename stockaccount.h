@@ -42,6 +42,10 @@ public:
 
     StockNode *findStock(const std::string &symbol);
 
+    void recordPortfolioValue();
+
+    double calculateTotalPortfolioValue() const;
+
     void price_of_stock() const;
 
     void portfolio_of_stock();

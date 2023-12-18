@@ -5,6 +5,7 @@
 #include <ctime>
 #include <algorithm>
 #include <vector>
+#include <fstream>
 
 #include "stockaccount.h"
 // #include "StockPriceStrategy.h"
@@ -126,6 +127,57 @@ void stockaccount::portfolio_of_stock()
     std::cout << "Total portfolio value: $" << total_portfolio_value << "\n";
 }
 
+void stockaccount::recordPortfolioValue()
+{
+    ofstream resultFile("Results.txt", ios::app);
+    if (resultFile.is_open())
+    {
+        // Calculate the total portfolio value (cash balance + value of stocks) here
+        double totalPortfolioValue = calculateTotalPortfolioValue();
+
+        // Get the current date and time
+        time_t seconds;
+        seconds = time(NULL);
+        tm *timeinfo = localtime(&seconds);
+
+        PortfolioData data_point;
+        data_point.date_time = asctime(timeinfo);
+        data_point.portfolio_value = totalPortfolioValue;
+
+        portfolio_data_vector.push_back(data_point);
+
+        // Record the information in the file
+        resultFile << "Date and Time: " << asctime(timeinfo);
+        resultFile << "Total Portfolio Value: $" << totalPortfolioValue << endl;
+
+        resultFile.close();
+
+        export_portfolio_data();
+    }
+    else
+    {
+        cout << "Unable to open Results.txt for recording portfolio value." << endl;
+    }
+}
+
+double stockaccount::calculateTotalPortfolioValue() const
+{
+    double totalPortfolioValue = cash_balance;
+
+    StockNode *current = head;
+    while (current != nullptr)
+    {
+        if (current->shares > 0)
+        {
+            double stockValue = current->shares * current->price_per_share;
+            totalPortfolioValue += stockValue;
+        }
+        current = current->next;
+    }
+
+    return totalPortfolioValue;
+}
+
 double stockaccount::buy_share()
 {
     string company_symbol;
@@ -219,6 +271,7 @@ double stockaccount::buy_share()
         cout << "\nTHE COMPANY STOCK SYMBOL CANNOT BE FOUND\n HENCE, TRANSACTION FAILED!";
     }
 
+    recordPortfolioValue();
     return balance;
 }
 
@@ -236,7 +289,6 @@ void details(const string &stock_symbol, double stock_volume, double stock_price
     transaction_history << "Buy " << stock_symbol << " " << stock_volume << " $" << stock_price << " $" << (stock_price * stock_volume) << " " << formatted_time << "\n";
     transaction_history.close();
 }
-
 
 // ... (Your existing code)
 
@@ -379,12 +431,17 @@ double stockaccount::sell_share()
 
     // If the program reaches this point, the company symbol wasn't found in Results.txt
     cout << "THE COMPANY STOCK SYMBOL CANNOT BE FOUND." << endl;
+
+    recordPortfolioValue();
     return balance;
 }
 
-
 void stockaccount::graph_portfolio_value()
 {
+    // Display the graph using the data in portfolio_data_vector
+    // You can use MATLAB or any other tool to plot the graph
+
+    // For example, you can print the data to console
     std::cout << std::left << std::setw(20) << "DateTime" << std::setw(20) << "Portfolio Value"
               << "\n";
 
@@ -405,7 +462,6 @@ void stockaccount::export_portfolio_data()
 
     csv_file << "DateTime,PortfolioValue\n";
 
-    // Iterate through your transaction history or portfolio data to export date-time and portfolio value
     for (const auto &data_point : portfolio_data_vector)
     {
         csv_file << data_point.date_time << "," << data_point.portfolio_value << "\n";
@@ -415,6 +471,7 @@ void stockaccount::export_portfolio_data()
 
     std::cout << "Portfolio data exported to portfolio_data.csv.\n";
 }
+
 
 void stockaccount::transaction_history()
 {

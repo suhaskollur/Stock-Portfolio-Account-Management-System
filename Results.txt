@@ -1,0 +1,28 @@
+Date and Time: Sun Dec 17 21:31:11 2023
+Total Portfolio Value: $10000
+Date and Time: Sun Dec 17 21:31:21 2023
+Total Portfolio Value: $10041.6
+Date and Time: Sun Dec 17 21:31:33 2023
+Total Portfolio Value: $10227.4
+Date and Time: Sun Dec 17 21:32:13 2023
+Total Portfolio Value: $19346.8
+Date and Time: Sun Dec 17 21:46:27 2023
+Total Portfolio Value: $18534.5
+Date and Time: Sun Dec 17 21:46:37 2023
+Total Portfolio Value: $18605.9
+Date and Time: Sun Dec 17 21:52:36 2023
+Total Portfolio Value: $20810.3
+Date and Time: Sun Dec 17 21:52:47 2023
+Total Portfolio Value: $20899.6
+Date and Time: Sun Dec 17 21:52:57 2023
+Total Portfolio Value: $21185.4
+Date and Time: Sun Dec 17 21:53:07 2023
+Total Portfolio Value: $21404.7
+Date and Time: Sun Dec 17 22:31:08 2023
+Total Portfolio Value: $19128.8
+Date and Time: Sun Dec 17 22:31:25 2023
+Total Portfolio Value: $19771.9
+Date and Time: Sun Dec 17 22:31:36 2023
+Total Portfolio Value: $19771.9
+Date and Time: Sun Dec 17 22:31:51 2023
+Total Portfolio Value: $28306.3

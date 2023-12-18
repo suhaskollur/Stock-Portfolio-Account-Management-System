@@ -93,11 +93,12 @@ void bankaccount::print_history() const
     }
     else
     {
-        cout << left << "\tOccurrence" << "\tAmount" << "\tDate" << "\tBalance" << endl;
+        cout << left << setw(15) << "Occurrence" << setw(10) << "Amount" << setw(15) << "Date" << setw(15) << "Balance" << endl;
+
         string occurrence, amount, date, balance;
         while (file_transaction >> occurrence >> amount >> date >> balance)
         {
-            cout << "\t" << occurrence << "\t" << amount << "\t" << date << "\t" << balance << endl;
+            cout << left << setw(15) << occurrence << setw(10) << amount << setw(15) << date << setw(15) << balance << endl;
         }
     }
     file_transaction.close();
