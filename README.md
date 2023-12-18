@@ -13,8 +13,6 @@ This C++ project implements a robust Account Management System with Stock Portfo
 - [Usage](#usage)
 - [Installation](#installation)
 - [Technical Details](#technical-details)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 

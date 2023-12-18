@@ -473,7 +473,7 @@ void stockaccount::export_portfolio_data()
 }
 
 
-void stockaccount::transaction_history()
+void stockaccount::print_transaction_history()
 {
     ifstream transaction_file("stock_transaction_history.txt");
 
@@ -483,23 +483,35 @@ void stockaccount::transaction_history()
         return;
     }
 
-    std::cout << "Reading transaction history...\n"; // Add this line
+    std::cout << "Printing Total Transaction History -\n";
+    std::cout << std::left << std::setw(8) << "Event" << std::setw(12) << "CompSymbol" << std::setw(8) << "Number"
+              << std::setw(14) << "PricePerShare" << std::setw(12) << "TotalValue" << std::setw(12) << "Time"
+              << "\n";
+
+    std::vector<TransactionRecord> transactions;
 
     std::string event, symbol, time;
     int number;
     double price, total_value;
 
-    std::cout << std::left << std::setw(8) << "Event" << std::setw(12) << "CompSymbol" << std::setw(8) << "Number"
-              << std::setw(14) << "PricePerShare" << std::setw(12) << "TotalValue" << std::setw(12) << "Time"
-              << "\n";
-
     while (transaction_file >> event >> symbol >> number >> price >> total_value >> time)
     {
-        std::cout << "Read transaction: " << event << " " << symbol << " " << number << " " << price << " " << total_value << " " << time << "\n";
+        TransactionRecord record{event, symbol, number, price, total_value, time};
+        transactions.push_back(record);
+    }
 
-        std::cout << std::left << std::setw(8) << event << std::setw(12) << symbol << std::setw(8) << number
-                  << std::setw(14) << price << std::setw(12) << total_value << std::setw(12) << time << "\n";
+    // Sort transactions based on time
+    std::sort(transactions.begin(), transactions.end(), [](const TransactionRecord &a, const TransactionRecord &b) {
+        return a.time < b.time;
+    });
+
+    for (const auto &record : transactions)
+    {
+        std::cout << std::left << std::setw(8) << record.event << std::setw(12) << record.symbol << std::setw(8) << record.number
+                  << std::setw(14) << record.price << std::setw(12) << record.total_value << std::setw(12) << record.time << "\n";
     }
 
     transaction_file.close();
 }
+
+

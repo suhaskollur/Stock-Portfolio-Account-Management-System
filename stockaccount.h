@@ -56,7 +56,7 @@ public:
 
     void graph_portfolio_value();
 
-    void transaction_history();
+    void print_transaction_history();
 
     void export_portfolio_data();
 };

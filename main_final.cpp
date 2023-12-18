@@ -115,7 +115,7 @@ int main()
 
                                         case 6:
                                                 cout << "Printing Total Transaction History -" << endl;
-                                                stk->transaction_history();
+                                                stk->print_transaction_history();
                                                 break;
 
                                         case 7:
