@@ -3,10 +3,11 @@
 #include <string>
 #include <fstream>
 #include <ctime>
+#include <algorithm>
+#include <vector>
 
 #include "stockaccount.h"
 // #include "StockPriceStrategy.h"
-
 
 using namespace std;
 
@@ -14,7 +15,6 @@ StockNode::StockNode(const std::string &sym, int sh, double price)
     : symbol(sym), shares(sh), price_per_share(price), next(nullptr), prev(nullptr) {}
 
 void details(const string &stock_symbol, double stock_volume, double stock_price);
-
 
 StockNode *stockaccount::findStock(const std::string &symbol)
 {
@@ -30,6 +30,15 @@ StockNode *stockaccount::findStock(const std::string &symbol)
     return nullptr;
 }
 
+struct TransactionRecord
+{
+    std::string event;
+    std::string symbol;
+    int number;
+    double price;
+    double total_value;
+    std::string time;
+};
 
 stockaccount::stockaccount()
 {
@@ -213,18 +222,21 @@ double stockaccount::buy_share()
     return balance;
 }
 
-
 void details(const string &stock_symbol, double stock_volume, double stock_price)
 {
-    // Implementation of the details function...
     ofstream transaction_history("stock_transaction_history.txt", ios::app);
     time_t now = time(0);
     tm *ltm = localtime(&now);
 
+    // Format time as HH:MM:SS
+    char formatted_time[9];
+    strftime(formatted_time, sizeof(formatted_time), "%H:%M:%S", ltm);
+
     // Print the transaction details to the file
-    transaction_history << "Buy " << stock_symbol << " " << stock_volume << " $" << stock_price << " $" << (stock_price * stock_volume) << " " << ltm->tm_hour << ":" << ltm->tm_min << ":" << ltm->tm_sec << endl;
+    transaction_history << "Buy " << stock_symbol << " " << stock_volume << " $" << stock_price << " $" << (stock_price * stock_volume) << " " << formatted_time << "\n";
     transaction_history.close();
 }
+
 
 double stockaccount::sell_share()
 {
@@ -250,26 +262,13 @@ double stockaccount::sell_share()
 
 void stockaccount::graph_portfolio_value()
 {
-    std::ifstream history_file("stock_transaction_history.txt");
-
-    if (!history_file.is_open())
-    {
-        std::cerr << "Error: Could not open portfolio history file.\n";
-        return;
-    }
-
-    double value;
-    std::string date, time;
-
     std::cout << std::left << std::setw(20) << "DateTime" << std::setw(20) << "Portfolio Value"
               << "\n";
 
-    while (history_file >> date >> time >> value)
+    for (const auto &data_point : portfolio_data_vector)
     {
-        std::cout << std::left << std::setw(20) << date + " " + time << std::setw(20) << value << "\n";
+        std::cout << std::left << std::setw(20) << data_point.date_time << std::setw(20) << data_point.portfolio_value << "\n";
     }
-
-    history_file.close();
 }
 
 void stockaccount::export_portfolio_data()
@@ -296,13 +295,15 @@ void stockaccount::export_portfolio_data()
 
 void stockaccount::transaction_history()
 {
-    std::ifstream transaction_file("stock_transaction_history.txt");
+    ifstream transaction_file("stock_transaction_history.txt");
 
     if (!transaction_file.is_open())
     {
         std::cerr << "Error: Could not open transaction history file.\n";
         return;
     }
+
+    std::cout << "Reading transaction history...\n"; // Add this line
 
     std::string event, symbol, time;
     int number;
@@ -314,6 +315,8 @@ void stockaccount::transaction_history()
 
     while (transaction_file >> event >> symbol >> number >> price >> total_value >> time)
     {
+        std::cout << "Read transaction: " << event << " " << symbol << " " << number << " " << price << " " << total_value << " " << time << "\n";
+
         std::cout << std::left << std::setw(8) << event << std::setw(12) << symbol << std::setw(8) << number
                   << std::setw(14) << price << std::setw(12) << total_value << std::setw(12) << time << "\n";
     }

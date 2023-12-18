@@ -6,7 +6,6 @@
 #include <math.h>
 
 #include "account.h"
-#include "stockaccount.h"
 
 using namespace std;
 
@@ -33,8 +32,8 @@ class stockaccount : public account
 private:
     double cash_balance;
     StockNode *head;
-    std::string file_portfolio;    
-    std::string file_transactions; 
+    // std::string file_portfolio;    
+    // std::string file_transactions; 
     std::vector<PortfolioData> portfolio_data_vector;
                                    
 public:

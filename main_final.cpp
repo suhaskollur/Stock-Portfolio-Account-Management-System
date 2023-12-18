@@ -5,26 +5,38 @@
 #include "account.h"
 #include "stockaccount.h"
 #include "bankaccount.h"
+#include <limits> 
 
 using namespace std;
 
+void clearInputBuffer()
+{
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cin.clear(); // clear any error flags
+}
+
 void stocks()
 {
-        int choice = 0;
-        cout << "OPTION 1: DISPLAY THE PRICE FOR A STOCK SYMBOL " << endl;
-        cout << "OPTION 2: DISPLAY THE CURRENT PORTFOLIO " << endl;
-        cout << "OPTION 3: BUY SHARES " << endl;
-        cout << "OPTION 4: SELL SHARES " << endl;
-        cout << "OPTION 5: VIEW A GRAPH FOR THE PORTFOLIO VALUE " << endl;
-        cout << "OPTION 6: VIEW TRANSACTION HISTORY " << endl;
-        cout << "OPTION 7: RETURN TO CURRENT MENU\n"
-             << endl;
-        if (!(cin >> choice))
-        {
-                cout << "INVALID OPERATION!" << endl;
-                cin.clear();
-        }
+    int choice = 0;
+    cout << "OPTION 1: DISPLAY THE PRICE FOR A STOCK SYMBOL " << endl;
+    cout << "OPTION 2: DISPLAY THE CURRENT PORTFOLIO " << endl;
+    cout << "OPTION 3: BUY SHARES " << endl;
+    cout << "OPTION 4: SELL SHARES " << endl;
+    cout << "OPTION 5: VIEW A GRAPH FOR THE PORTFOLIO VALUE " << endl;
+    cout << "OPTION 6: VIEW TRANSACTION HISTORY " << endl;
+    cout << "OPTION 7: RETURN TO CURRENT MENU\n"
+         << endl;
+    if (!(cin >> choice))
+    {
+        cout << "INVALID OPERATION!" << endl;
+        cin.clear();
+    }
+
+    // Clear the input buffer
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cin.clear();
 }
+
 
 void bank()
 {
@@ -38,13 +50,10 @@ void bank()
                 cout << "INVALID OPERATION!" << endl;
                 cin.clear();
         }
+
+        clearInputBuffer();
 }
 
-void clearInputBuffer()
-{
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-}
 
 int main()
 {
@@ -59,8 +68,7 @@ int main()
                 cout << "WELCOME TO THE ACCOUNT MANAGEMENT SYSTEM!" << endl;
                 cout << "OPTION 1: STOCK ACCOUNT" << endl;
                 cout << "OPTION 2: BANK ACCOUNT" << endl;
-                cout << "OPTION 3: EXIT \n"
-                     << endl;
+                cout << "OPTION 3: EXIT \n"<< endl;
                 cout << "ENTER THE CHOICE NUMBER TO BE EXECUTED!" << endl;
                 cin >> choice;
 
