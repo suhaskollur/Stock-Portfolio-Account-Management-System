@@ -238,13 +238,13 @@ void details(const string &stock_symbol, double stock_volume, double stock_price
 }
 
 
+// ... (Your existing code)
+
 double stockaccount::sell_share()
 {
-    string stock_symbol;
+    string company_symbol;
     double stock_volume = 0;
     double minimum_volume = 0;
-    // char choice = '4';
-    int file_check = 0;
     double balance = 0;
     double stock_price = 0;
 
@@ -256,9 +256,132 @@ double stockaccount::sell_share()
     else
     {
         cash_file >> balance;
+        cash_file.close(); // Close the file after reading
     }
-    return 0.0;
+
+    cout << "\nPerforming Sale of Shares of Latest Stock -" << endl;
+    cout << "ENTER THE COMPANY SYMBOL WHO YOU WISH TO SELL SHARES FOR: ";
+    cin >> company_symbol;
+
+    // Find the stock in the portfolio
+    StockNode *existingStock = findStock(company_symbol);
+
+    if (existingStock == nullptr || existingStock->shares == 0)
+    {
+        cout << "The stock is not in the portfolio or insufficient shares for selling." << endl;
+        return balance;
+    }
+
+    ifstream data;
+    int read_file = rand() % 2;
+    if (read_file == 0)
+    {
+        data.open("Result_1.txt");
+    }
+    else
+    {
+        data.open("Result_2.txt");
+    }
+
+    while (data >> company_symbol >> stock_price)
+    {
+        if (company_symbol == existingStock->symbol)
+        {
+            cout << "ENTER THE VOLUME OF SHARE YOU WISH TO SELL: ";
+            cin >> stock_volume;
+
+            // Check if there are sufficient shares for selling
+            if (stock_volume > existingStock->shares)
+            {
+                cout << "Insufficient shares for selling." << endl;
+                return balance;
+            }
+
+            cout << "ENTER THE MINIMUM AMOUNT YOU WANT TO SELL EACH SHARE FOR: ";
+            cin >> minimum_volume;
+
+            // Check if the price per stock is lower than the minimum amount
+            if (stock_price < minimum_volume)
+            {
+                cout << "The price per stock is lower than the minimum amount. Transaction failed." << endl;
+                return balance;
+            }
+
+            // Proceed with the sale
+            balance += stock_price * stock_volume;
+            existingStock->shares -= stock_volume;
+
+            // Remove the stock from the portfolio if shares are 0
+            if (existingStock->shares == 0)
+            {
+                // Remove the stock from the linked list
+                if (existingStock->prev)
+                {
+                    existingStock->prev->next = existingStock->next;
+                }
+                else
+                {
+                    // If it's the head, update the head
+                    head = existingStock->next;
+                }
+
+                if (existingStock->next)
+                {
+                    existingStock->next->prev = existingStock->prev;
+                }
+
+                // Free the memory
+                delete existingStock;
+            }
+
+            // Add transaction details to stock_transaction_history.txt
+            ofstream transaction_history("stock_transaction_history.txt", ios::app);
+            if (transaction_history.is_open())
+            {
+                time_t now = time(0);
+                tm *ltm = localtime(&now);
+
+                // Format time as HH:MM:SS
+                char formatted_time[9];
+                strftime(formatted_time, sizeof(formatted_time), "%H:%M:%S", ltm);
+
+                transaction_history << "Sell " << company_symbol << " " << stock_volume << " $" << stock_price << " $" << (stock_price * stock_volume) << " " << formatted_time << "\n";
+                transaction_history.close();
+            }
+
+            // Add deposit transaction to bank account history
+            ofstream bank_transaction_history("bank_transaction_history.txt", ios::app);
+            if (bank_transaction_history.is_open())
+            {
+                time_t now = time(0);
+                tm *ltm = localtime(&now);
+
+                // Format time as HH:MM:SS
+                char formatted_time[9];
+                strftime(formatted_time, sizeof(formatted_time), "%H:%M:%S", ltm);
+
+                bank_transaction_history << "Deposit $" << (stock_price * stock_volume) << " " << formatted_time << "\n";
+                bank_transaction_history.close();
+            }
+
+            // Update the balance in the balance.txt file
+            ofstream balance_file("balance.txt");
+            if (balance_file.is_open())
+            {
+                balance_file << balance;
+                balance_file.close();
+            }
+
+            cout << "Transaction is successful!" << stock_volume << " " << company_symbol << endl;
+            return balance;
+        }
+    }
+
+    // If the program reaches this point, the company symbol wasn't found in Results.txt
+    cout << "THE COMPANY STOCK SYMBOL CANNOT BE FOUND." << endl;
+    return balance;
 }
+
 
 void stockaccount::graph_portfolio_value()
 {
